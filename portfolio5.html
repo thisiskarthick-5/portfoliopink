@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Portfolio | Creative Developer</title>
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: { primary: "#6C63FF", secondary: "#F87171" },
+            borderRadius: {
+              none: "0px",
+              sm: "4px",
+              DEFAULT: "8px",
+              md: "12px",
+              lg: "16px",
+              xl: "20px",
+              "2xl": "24px",
+              "3xl": "32px",
+              full: "9999px",
+              button: "8px",
+            },
+          },
+        },
+      };
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/ScrollTrigger.min.js"></script>
+    <style>
+      :where([class^="ri-"])::before { content: "\f3c2"; }
+
+      body {
+          font-family: 'Space Grotesk', sans-serif;
+          background-color: #121212;
+          color: #fff;
+          overflow-x: hidden;
+      }
+
+      .custom-cursor {
+          position: fixed;
+          width: 20px;
+          height: 20px;
+          border-radius: 50%;
+          background-color: rgba(108, 99, 255, 0.5);
+          mix-blend-mode: difference;
+          pointer-events: none;
+          z-index: 9999;
+          transform: translate(-50%, -50%);
+          transition: width 0.3s, height 0.3s, background-color 0.3s;
+      }
+
+      .cursor-trail {
+          position: fixed;
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          background-color: rgba(108, 99, 255, 0.3);
+          pointer-events: none;
+          z-index: 9998;
+          transform: translate(-50%, -50%);
+      }
+
+      .magnetic-button {
+          position: relative;
+          transition: transform 0.3s ease;
+      }
+
+      .scroll-indicator {
+          position: fixed;
+          bottom: 30px;
+          right: 30px;
+          width: 50px;
+          height: 50px;
+          border-radius: 50%;
+          border: 2px solid rgba(255, 255, 255, 0.2);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 100;
+      }
+
+      .scroll-indicator::after {
+          content: "";
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          background-color: #6C63FF;
+          animation: scrollIndicator 2s infinite;
+      }
+
+      @keyframes scrollIndicator {
+          0% { transform: translateY(-10px); opacity: 0; }
+          50% { opacity: 1; }
+          100% { transform: translateY(10px); opacity: 0; }
+      }
+
+      .text-reveal {
+          overflow: hidden;
+      }
+
+      .text-reveal span {
+          display: block;
+          transform: translateY(100%);
+          transition: transform 0.5s ease;
+      }
+
+      .text-reveal.visible span {
+          transform: translateY(0);
+      }
+
+      .project-card {
+          transition: transform 0.5s ease, box-shadow 0.5s ease;
+      }
+
+      .project-card:hover {
+          transform: translateY(-10px);
+          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+      }
+
+      .project-card .project-overlay {
+          opacity: 0;
+          transition: opacity 0.3s ease;
+      }
+
+      .project-card:hover .project-overlay {
+          opacity: 1;
+      }
+
+      #canvas-container {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100vh;
+          z-index: -1;
+      }
+
+      .section {
+          min-height: 100vh;
+          position: relative;
+          z-index: 1;
+      }
+
+      .nav-link {
+          position: relative;
+          overflow: hidden;
+      }
+
+      .nav-link::after {
+          content: '';
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          width: 0;
+          height: 2px;
+          background-color: #6C63FF;
+          transition: width 0.3s ease;
+      }
+
+      .nav-link:hover::after {
+          width: 100%;
+      }
+
+      .floating-element {
+          animation: float 6s ease-in-out infinite;
+      }
+
+      @keyframes float {
+          0% { transform: translateY(0px) rotate(0deg); }
+          50% { transform: translateY(-20px) rotate(5deg); }
+          100% { transform: translateY(0px) rotate(0deg); }
+      }
+
+      input, textarea {
+          background-color: rgba(255, 255, 255, 0.05);
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          color: #fff;
+          transition: border-color 0.3s ease, transform 0.3s ease;
+      }
+
+      input:focus, textarea:focus {
+          border-color: #6C63FF;
+          transform: translateY(-2px);
+          outline: none;
+      }
+
+      .hamburger {
+          width: 30px;
+          height: 20px;
+          position: relative;
+          cursor: pointer;
+      }
+
+      .hamburger span {
+          display: block;
+          position: absolute;
+          height: 2px;
+          width: 100%;
+          background: #fff;
+          border-radius: 9px;
+          left: 0;
+          transform: rotate(0deg);
+          transition: .25s ease-in-out;
+      }
+
+      .hamburger span:nth-child(1) {
+          top: 0px;
+      }
+
+      .hamburger span:nth-child(2) {
+          top: 9px;
+      }
+
+      .hamburger span:nth-child(3) {
+          top: 18px;
+      }
+
+      .hamburger.open span:nth-child(1) {
+          top: 9px;
+          transform: rotate(135deg);
+      }
+
+      .hamburger.open span:nth-child(2) {
+          opacity: 0;
+          left: -60px;
+      }
+
+      .hamburger.open span:nth-child(3) {
+          top: 9px;
+          transform: rotate(-135deg);
+      }
+
+      .mobile-menu {
+          position: fixed;
+          top: 0;
+          right: -100%;
+          width: 100%;
+          height: 100vh;
+          background-color: #121212;
+          z-index: 999;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          transition: right 0.5s ease;
+      }
+
+      .mobile-menu.open {
+          right: 0;
+      }
+
+      .horizontal-scroll-container {
+          display: flex;
+          overflow-x: auto;
+          scroll-snap-type: x mandatory;
+          scrollbar-width: none;
+          -ms-overflow-style: none;
+      }
+
+      .horizontal-scroll-container::-webkit-scrollbar {
+          display: none;
+      }
+
+      .horizontal-scroll-item {
+          flex: 0 0 auto;
+          width: 80%;
+          margin-right: 40px;
+          scroll-snap-align: start;
+      }
+
+      .parallax-bg {
+          transform: translateZ(-10px) scale(2);
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          z-index: -1;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="custom-cursor"></div>
+    <div id="canvas-container"></div>
+
+    <div class="scroll-indicator"></div>
+
+    <header
+      class="fixed top-0 left-0 w-full z-50 px-8 py-6 flex justify-between items-center"
+    >
+      <a href="#" class="text-2xl font-['Pacifico'] text-white">logo</a>
+
+      <nav class="hidden md:flex space-x-8">
+        <a
+          href="#home"
+          class="nav-link text-white hover:text-primary transition-colors"
+          >Home</a
+        >
+        <a
+          href="#about"
+          class="nav-link text-white hover:text-primary transition-colors"
+          >About</a
+        >
+        <a
+          href="#projects"
+          class="nav-link text-white hover:text-primary transition-colors"
+          >Projects</a
+        >
+        <a
+          href="#contact"
+          class="nav-link text-white hover:text-primary transition-colors"
+          >Contact</a
+        >
+      </nav>
+
+      <div class="hamburger md:hidden">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </header>
+
+    <div class="mobile-menu">
+      <a
+        href="#home"
+        class="text-2xl font-bold my-4 text-white hover:text-primary transition-colors"
+        >Home</a
+      >
+      <a
+        href="#about"
+        class="text-2xl font-bold my-4 text-white hover:text-primary transition-colors"
+        >About</a
+      >
+      <a
+        href="#projects"
+        class="text-2xl font-bold my-4 text-white hover:text-primary transition-colors"
+        >Projects</a
+      >
+      <a
+        href="#contact"
+        class="text-2xl font-bold my-4 text-white hover:text-primary transition-colors"
+        >Contact</a
+      >
+    </div>
+
+    <section
+      id="home"
+      class="section flex items-center justify-center min-h-screen w-full relative overflow-hidden"
+    >
+      <div class="w-full max-w-7xl mx-auto px-8 py-20">
+        <div class="text-reveal visible">
+          <span
+            class="text-sm uppercase tracking-widest text-primary mb-4 inline-block"
+            >Creative Developer</span
+          >
+        </div>
+        <div class="text-reveal visible mt-4">
+          <h1 class="text-5xl md:text-7xl lg:text-9xl font-bold leading-tight">
+            <span>Crafting Digital</span>
+          </h1>
+        </div>
+        <div class="text-reveal visible mt-4">
+          <h1 class="text-5xl md:text-7xl lg:text-9xl font-bold leading-tight">
+            <span>Experiences</span>
+          </h1>
+        </div>
+        <div class="text-reveal visible mt-12">
+          <span class="text-xl text-gray-400 max-w-2xl block">
+            Blending code and design to create immersive digital journeys that
+            push the boundaries of web technology.
+          </span>
+        </div>
+        <div class="mt-12">
+          <a
+            href="#projects"
+            class="magnetic-button inline-block bg-primary text-white px-8 py-4 font-medium !rounded-button hover:bg-opacity-90 transition-all whitespace-nowrap"
+          >
+            Explore My Work
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section id="about" class="section w-full relative overflow-hidden py-20">
+      <div class="w-full max-w-7xl mx-auto px-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+          <div>
+            <div class="text-reveal">
+              <span
+                class="text-sm uppercase tracking-widest text-primary mb-4 inline-block"
+                >About Me</span
+              >
+            </div>
+            <div class="text-reveal">
+              <h2 class="text-4xl md:text-5xl font-bold mb-8">
+                <span>Pushing the boundaries of digital design</span>
+              </h2>
+            </div>
+            <div class="text-reveal">
+              <p class="text-xl text-gray-400 mb-6">
+                <span
+                  >I'm a creative developer with over 8 years of experience
+                  crafting immersive digital experiences. My work sits at the
+                  intersection of design and technology, combining stunning
+                  visuals with cutting-edge code.</span
+                >
+              </p>
+            </div>
+            <div class="text-reveal">
+              <p class="text-xl text-gray-400 mb-8">
+                <span
+                  >I specialize in WebGL, Three.js, and creative animations that
+                  push the boundaries of what's possible on the web. My approach
+                  focuses on creating memorable, interactive experiences that
+                  engage users and tell compelling stories.</span
+                >
+              </p>
+            </div>
+            <div class="grid grid-cols-2 gap-6 mt-12">
+              <div class="text-reveal">
+                <h3 class="text-3xl font-bold text-white mb-2">
+                  <span>50+</span>
+                </h3>
+                <p class="text-gray-400"><span>Projects Completed</span></p>
+              </div>
+              <div class="text-reveal">
+                <h3 class="text-3xl font-bold text-white mb-2">
+                  <span>8+</span>
+                </h3>
+                <p class="text-gray-400"><span>Years Experience</span></p>
+              </div>
+              <div class="text-reveal">
+                <h3 class="text-3xl font-bold text-white mb-2">
+                  <span>25+</span>
+                </h3>
+                <p class="text-gray-400"><span>Happy Clients</span></p>
+              </div>
+              <div class="text-reveal">
+                <h3 class="text-3xl font-bold text-white mb-2">
+                  <span>12</span>
+                </h3>
+                <p class="text-gray-400"><span>Awards Won</span></p>
+              </div>
+            </div>
+          </div>
+          <div class="relative">
+            <div class="w-full h-[600px] relative overflow-hidden rounded-lg">
+              <div
+                class="absolute inset-0 bg-gradient-to-t from-[#121212] to-transparent z-10"
+              ></div>
+              <img
+                src="https://readdy.ai/api/search-image?query=professional%20portrait%20of%20a%20creative%20developer%2C%20artistic%2C%20dramatic%20lighting%2C%20high%20contrast%2C%20modern%2C%20tech-inspired%20environment%2C%20stylized%2C%20dark%20background%20with%20blue%20and%20purple%20accent%20lighting%2C%20cinematic%2C%20high-end%20photography&width=600&height=800&seq=about-portrait&orientation=portrait"
+                alt="Creative Developer Portrait"
+                class="w-full h-full object-cover object-top"
+              />
+            </div>
+            <div class="absolute -top-10 -left-10 w-40 h-40 floating-element">
+              <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                <path
+                  fill="#6C63FF"
+                  d="M41.3,-69.8C53.4,-63.5,63.2,-52.3,70.1,-39.2C77,-26.1,81,-11.1,80.3,3.5C79.7,18.1,74.4,32.3,65.5,43.9C56.6,55.5,44,64.5,30.4,70.1C16.8,75.8,2.1,78.1,-12.4,76.6C-26.9,75.1,-41.1,69.8,-52.7,60.5C-64.3,51.2,-73.3,38,-77.8,23.2C-82.3,8.5,-82.3,-7.8,-77.4,-22C-72.5,-36.2,-62.7,-48.3,-50.1,-54.7C-37.6,-61.1,-22.3,-61.8,-7.7,-60.2C6.9,-58.6,29.2,-76.1,41.3,-69.8Z"
+                  transform="translate(100 100)"
+                />
+              </svg>
+            </div>
+            <div
+              class="absolute -bottom-10 -right-10 w-32 h-32 floating-element"
+              style="animation-delay: 1s;"
+            >
+              <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                <path
+                  fill="#F87171"
+                  d="M47.7,-73.2C62.8,-67.3,76.8,-56.3,83.7,-41.8C90.6,-27.4,90.4,-9.5,85.9,6.3C81.4,22.1,72.6,35.9,61.5,46.8C50.3,57.8,36.8,66,22.2,71.9C7.6,77.8,-8.1,81.4,-22.4,77.9C-36.7,74.4,-49.5,63.8,-60.1,51C-70.7,38.2,-79,23.2,-81.2,7.1C-83.4,-9,-79.5,-26.2,-70.3,-39.2C-61.1,-52.2,-46.7,-61,-32.5,-67C-18.3,-73,-9.2,-76.2,3.1,-81.2C15.3,-86.1,32.6,-79.1,47.7,-73.2Z"
+                  transform="translate(100 100)"
+                />
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section
+      id="projects"
+      class="section w-full relative overflow-hidden py-20"
+    >
+      <div class="w-full max-w-7xl mx-auto px-8">
+        <div class="text-reveal">
+          <span
+            class="text-sm uppercase tracking-widest text-primary mb-4 inline-block"
+            >Featured Projects</span
+          >
+        </div>
+        <div class="flex justify-between items-end mb-12">
+          <div class="text-reveal">
+            <h2 class="text-4xl md:text-5xl font-bold">
+              <span>Selected Work</span>
+            </h2>
+          </div>
+          <div>
+            <a href="#" class="text-primary hover:underline"
+              >View All Projects</a
+            >
+          </div>
+        </div>
+
+        <div class="horizontal-scroll-container py-8">
+          <div class="horizontal-scroll-item">
+            <div class="project-card bg-[#1a1a1a] rounded-lg overflow-hidden">
+              <div class="relative h-[500px] overflow-hidden">
+                <img
+                  src="https://readdy.ai/api/search-image?query=luxury%20fashion%20e-commerce%20website%20design%2C%20modern%2C%20minimalist%2C%20high-end%2C%20elegant%20interface%20with%20dark%20background%2C%20product%20showcase%20with%20dramatic%20lighting%2C%20fashion%20photography%20with%20models%2C%20sleek%20UI%20design%2C%20premium%20web%20experience%2C%20portfolio%20showcase&width=800&height=600&seq=project1&orientation=landscape"
+                  alt="Luxury Fashion E-commerce"
+                  class="w-full h-full object-cover object-top transition-transform duration-700 hover:scale-105"
+                />
+                <div
+                  class="project-overlay absolute inset-0 bg-gradient-to-t from-[#121212] via-transparent to-transparent flex items-end p-8"
+                >
+                  <div>
+                    <span class="text-primary text-sm uppercase tracking-widest"
+                      >E-commerce</span
+                    >
+                    <h3 class="text-3xl font-bold mt-2">LUXE Fashion</h3>
+                    <p class="text-gray-400 mt-2 max-w-md">
+                      Immersive e-commerce experience for a luxury fashion brand
+                      featuring WebGL product showcases and custom animations.
+                    </p>
+                    <a
+                      href="#"
+                      class="inline-flex items-center mt-4 text-primary"
+                    >
+                      View Case Study
+                      <div
+                        class="w-6 h-6 ml-2 flex items-center justify-center"
+                      >
+                        <i class="ri-arrow-right-line"></i>
+                      </div>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="horizontal-scroll-item">
+            <div class="project-card bg-[#1a1a1a] rounded-lg overflow-hidden">
+              <div class="relative h-[500px] overflow-hidden">
+                <img
+                  src="https://readdy.ai/api/search-image?query=immersive%203D%20interactive%20museum%20experience%2C%20digital%20art%20gallery%2C%20virtual%20exhibition%20with%20glowing%20neon%20elements%2C%20futuristic%20interface%2C%20dark%20background%20with%20vibrant%20artwork%20displays%2C%20interactive%20art%20installation%2C%20WebGL%20visualization%2C%20portfolio%20showcase&width=800&height=600&seq=project2&orientation=landscape"
+                  alt="Digital Art Museum"
+                  class="w-full h-full object-cover object-top transition-transform duration-700 hover:scale-105"
+                />
+                <div
+                  class="project-overlay absolute inset-0 bg-gradient-to-t from-[#121212] via-transparent to-transparent flex items-end p-8"
+                >
+                  <div>
+                    <span class="text-primary text-sm uppercase tracking-widest"
+                      >Interactive Experience</span
+                    >
+                    <h3 class="text-3xl font-bold mt-2">NOVA Museum</h3>
+                    <p class="text-gray-400 mt-2 max-w-md">
+                      Virtual museum experience with 3D artwork exploration and
+                      interactive exhibits using Three.js and WebGL.
+                    </p>
+                    <a
+                      href="#"
+                      class="inline-flex items-center mt-4 text-primary"
+                    >
+                      View Case Study
+                      <div
+                        class="w-6 h-6 ml-2 flex items-center justify-center"
+                      >
+                        <i class="ri-arrow-right-line"></i>
+                      </div>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="horizontal-scroll-item">
+            <div class="project-card bg-[#1a1a1a] rounded-lg overflow-hidden">
+              <div class="relative h-[500px] overflow-hidden">
+                <img
+                  src="https://readdy.ai/api/search-image?query=music%20streaming%20application%20interface%2C%20dark%20mode%20UI%20design%20with%20vibrant%20visualizations%2C%20audio%20waveforms%2C%20album%20artwork%20display%2C%20sleek%20modern%20music%20player%20with%20neon%20accents%2C%20interactive%20music%20controls%2C%20portfolio%20showcase&width=800&height=600&seq=project3&orientation=landscape"
+                  alt="Music Streaming App"
+                  class="w-full h-full object-cover object-top transition-transform duration-700 hover:scale-105"
+                />
+                <div
+                  class="project-overlay absolute inset-0 bg-gradient-to-t from-[#121212] via-transparent to-transparent flex items-end p-8"
+                >
+                  <div>
+                    <span class="text-primary text-sm uppercase tracking-widest"
+                      >Web Application</span
+                    >
+                    <h3 class="text-3xl font-bold mt-2">Pulse Music</h3>
+                    <p class="text-gray-400 mt-2 max-w-md">
+                      Music streaming platform with real-time audio
+                      visualizations and immersive listening experiences.
+                    </p>
+                    <a
+                      href="#"
+                      class="inline-flex items-center mt-4 text-primary"
+                    >
+                      View Case Study
+                      <div
+                        class="w-6 h-6 ml-2 flex items-center justify-center"
+                      >
+                        <i class="ri-arrow-right-line"></i>
+                      </div>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact" class="section w-full relative overflow-hidden py-20">
+      <div class="w-full max-w-7xl mx-auto px-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-16">
+          <div>
+            <div class="text-reveal">
+              <span
+                class="text-sm uppercase tracking-widest text-primary mb-4 inline-block"
+                >Contact</span
+              >
+            </div>
+            <div class="text-reveal">
+              <h2 class="text-4xl md:text-6xl font-bold mb-8">
+                <span>Let's create something amazing together</span>
+              </h2>
+            </div>
+            <div class="text-reveal">
+              <p class="text-xl text-gray-400 mb-12">
+                <span
+                  >Have a project in mind or just want to say hello? I'm always
+                  open to discussing new projects, creative ideas or
+                  opportunities to be part of your vision.</span
+                >
+              </p>
+            </div>
+
+            <div class="space-y-8">
+              <div class="flex items-center">
+                <div
+                  class="w-12 h-12 rounded-full bg-[#1a1a1a] flex items-center justify-center mr-4"
+                >
+                  <i class="ri-mail-line text-primary"></i>
+                </div>
+                <div>
+                  <p class="text-gray-400">Email</p>
+                  <a
+                    href="mailto:hello@creativedeveloper.com"
+                    class="text-white hover:text-primary transition-colors"
+                    >hello@creativedeveloper.com</a
+                  >
+                </div>
+              </div>
+
+              <div class="flex items-center">
+                <div
+                  class="w-12 h-12 rounded-full bg-[#1a1a1a] flex items-center justify-center mr-4"
+                >
+                  <i class="ri-map-pin-line text-primary"></i>
+                </div>
+                <div>
+                  <p class="text-gray-400">Location</p>
+                  <p class="text-white">New York, NY</p>
+                </div>
+              </div>
+
+              <div class="flex items-center">
+                <div
+                  class="w-12 h-12 rounded-full bg-[#1a1a1a] flex items-center justify-center mr-4"
+                >
+                  <i class="ri-phone-line text-primary"></i>
+                </div>
+                <div>
+                  <p class="text-gray-400">Phone</p>
+                  <a
+                    href="tel:+12125551234"
+                    class="text-white hover:text-primary transition-colors"
+                    >+1 (212) 555-1234</a
+                  >
+                </div>
+              </div>
+            </div>
+
+            <div class="flex space-x-4 mt-12">
+              <a
+                href="#"
+                class="w-12 h-12 rounded-full bg-[#1a1a1a] flex items-center justify-center hover:bg-primary transition-colors"
+              >
+                <i class="ri-dribbble-line"></i>
+              </a>
+              <a
+                href="#"
+                class="w-12 h-12 rounded-full bg-[#1a1a1a] flex items-center justify-center hover:bg-primary transition-colors"
+              >
+                <i class="ri-github-line"></i>
+              </a>
+              <a
+                href="#"
+                class="w-12 h-12 rounded-full bg-[#1a1a1a] flex items-center justify-center hover:bg-primary transition-colors"
+              >
+                <i class="ri-linkedin-line"></i>
+              </a>
+              <a
+                href="#"
+                class="w-12 h-12 rounded-full bg-[#1a1a1a] flex items-center justify-center hover:bg-primary transition-colors"
+              >
+                <i class="ri-instagram-line"></i>
+              </a>
+            </div>
+          </div>
+
+          <div>
+            <form class="space-y-6">
+              <div>
+                <label for="name" class="block text-white mb-2">Name</label>
+                <input
+                  type="text"
+                  id="name"
+                  class="w-full px-4 py-3 !rounded-button border-none"
+                  placeholder="Your name"
+                />
+              </div>
+
+              <div>
+                <label for="email" class="block text-white mb-2">Email</label>
+                <input
+                  type="email"
+                  id="email"
+                  class="w-full px-4 py-3 !rounded-button border-none"
+                  placeholder="Your email"
+                />
+              </div>
+
+              <div>
+                <label for="subject" class="block text-white mb-2"
+                  >Subject</label
+                >
+                <input
+                  type="text"
+                  id="subject"
+                  class="w-full px-4 py-3 !rounded-button border-none"
+                  placeholder="Project inquiry"
+                />
+              </div>
+
+              <div>
+                <label for="message" class="block text-white mb-2"
+                  >Message</label
+                >
+                <textarea
+                  id="message"
+                  rows="5"
+                  class="w-full px-4 py-3 !rounded-button border-none"
+                  placeholder="Tell me about your project..."
+                ></textarea>
+              </div>
+
+              <button
+                type="submit"
+                class="magnetic-button w-full bg-primary text-white px-8 py-4 font-medium !rounded-button hover:bg-opacity-90 transition-all whitespace-nowrap"
+              >
+                Send Message
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="w-full bg-[#1a1a1a] py-12">
+      <div class="w-full max-w-7xl mx-auto px-8">
+        <div class="flex flex-col md:flex-row justify-between items-center">
+          <a href="#" class="text-2xl font-['Pacifico'] text-white mb-6 md:mb-0"
+            >logo</a
+          >
+
+          <div class="flex flex-wrap justify-center space-x-8">
+            <a
+              href="#home"
+              class="text-gray-400 hover:text-white transition-colors my-2"
+              >Home</a
+            >
+            <a
+              href="#about"
+              class="text-gray-400 hover:text-white transition-colors my-2"
+              >About</a
+            >
+            <a
+              href="#projects"
+              class="text-gray-400 hover:text-white transition-colors my-2"
+              >Projects</a
+            >
+            <a
+              href="#contact"
+              class="text-gray-400 hover:text-white transition-colors my-2"
+              >Contact</a
+            >
+          </div>
+
+          <p class="text-gray-500 mt-6 md:mt-0">© 2025 All Rights Reserved</p>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // Custom cursor
+        const cursor = document.querySelector(".custom-cursor");
+        const links = document.querySelectorAll("a, button, .magnetic-button");
+
+        document.addEventListener("mousemove", (e) => {
+          cursor.style.left = e.clientX + "px";
+          cursor.style.top = e.clientY + "px";
+        });
+
+        links.forEach((link) => {
+          link.addEventListener("mouseenter", () => {
+            cursor.style.width = "50px";
+            cursor.style.height = "50px";
+            cursor.style.backgroundColor = "rgba(108, 99, 255, 0.2)";
+          });
+
+          link.addEventListener("mouseleave", () => {
+            cursor.style.width = "20px";
+            cursor.style.height = "20px";
+            cursor.style.backgroundColor = "rgba(108, 99, 255, 0.5)";
+          });
+        });
+
+        // Create cursor trail
+        const createTrail = () => {
+          const trail = document.createElement("div");
+          trail.className = "cursor-trail";
+          document.body.appendChild(trail);
+
+          setTimeout(() => {
+            trail.style.left = cursor.style.left;
+            trail.style.top = cursor.style.top;
+
+            setTimeout(() => {
+              trail.remove();
+            }, 500);
+          }, 10);
+        };
+
+        setInterval(createTrail, 100);
+
+        // Magnetic buttons
+        const magneticButtons = document.querySelectorAll(".magnetic-button");
+
+        magneticButtons.forEach((button) => {
+          button.addEventListener("mousemove", (e) => {
+            const rect = button.getBoundingClientRect();
+            const x = e.clientX - rect.left - rect.width / 2;
+            const y = e.clientY - rect.top - rect.height / 2;
+
+            button.style.transform = `translate(${x * 0.2}px, ${y * 0.2}px)`;
+          });
+
+          button.addEventListener("mouseleave", () => {
+            button.style.transform = "translate(0, 0)";
+          });
+        });
+
+        // Text reveal on scroll
+        const textReveals = document.querySelectorAll(".text-reveal");
+
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add("visible");
+              }
+            });
+          },
+          { threshold: 0.1 },
+        );
+
+        textReveals.forEach((reveal) => {
+          observer.observe(reveal);
+        });
+
+        // Mobile menu
+        const hamburger = document.querySelector(".hamburger");
+        const mobileMenu = document.querySelector(".mobile-menu");
+        const mobileLinks = document.querySelectorAll(".mobile-menu a");
+
+        hamburger.addEventListener("click", () => {
+          hamburger.classList.toggle("open");
+          mobileMenu.classList.toggle("open");
+        });
+
+        mobileLinks.forEach((link) => {
+          link.addEventListener("click", () => {
+            hamburger.classList.remove("open");
+            mobileMenu.classList.remove("open");
+          });
+        });
+      });
+
+      // WebGL Background
+      document.addEventListener("DOMContentLoaded", function () {
+        const container = document.getElementById("canvas-container");
+
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(
+          75,
+          window.innerWidth / window.innerHeight,
+          0.1,
+          1000,
+        );
+        camera.position.z = 5;
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        container.appendChild(renderer.domElement);
+
+        // Create particles
+        const particlesGeometry = new THREE.BufferGeometry();
+        const particlesCount = 2000;
+
+        const posArray = new Float32Array(particlesCount * 3);
+
+        for (let i = 0; i < particlesCount * 3; i++) {
+          posArray[i] = (Math.random() - 0.5) * 10;
+        }
+
+        particlesGeometry.setAttribute(
+          "position",
+          new THREE.BufferAttribute(posArray, 3),
+        );
+
+        const particlesMaterial = new THREE.PointsMaterial({
+          size: 0.02,
+          color: 0x6c63ff,
+          transparent: true,
+          opacity: 0.8,
+        });
+
+        const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+        scene.add(particlesMesh);
+
+        // Animation
+        const animate = () => {
+          requestAnimationFrame(animate);
+
+          particlesMesh.rotation.x += 0.0005;
+          particlesMesh.rotation.y += 0.0005;
+
+          renderer.render(scene, camera);
+        };
+
+        animate();
+
+        // Handle resize
+        window.addEventListener("resize", () => {
+          camera.aspect = window.innerWidth / window.innerHeight;
+          camera.updateProjectionMatrix();
+          renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // Mouse move effect
+        document.addEventListener("mousemove", (event) => {
+          const mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+          const mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
+
+          particlesMesh.rotation.x += mouseY * 0.0005;
+          particlesMesh.rotation.y += mouseX * 0.0005;
+        });
+      });
+
+      // Smooth scrolling
+      document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+          anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+
+            const targetId = this.getAttribute("href");
+            const targetElement = document.querySelector(targetId);
+
+            if (targetElement) {
+              window.scrollTo({
+                top: targetElement.offsetTop,
+                behavior: "smooth",
+              });
+            }
+          });
+        });
+      });
+    </script>
+  </body>
+</html>
+s
